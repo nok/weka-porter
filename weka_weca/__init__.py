@@ -1,86 +1,99 @@
 
 
 class Node:
+    """Data structure of a single node."""
 
-    def __init__(self, start, end, depth=0):
+    def __init__(self, start, end, depth=0, indent='    '):
+        """
+        Wrap string initially around string.
+
+        Parameters
+        ----------
+        :param start : string
+            The start of the if-condition.
+        :param end : string
+            The end of the if-condition.
+        :param depth : integer
+            The indentation depth.
+        :param indent : string
+            The indentation style.
+        """
         self.start = start
         self.scope = []
         self.end = end
         self.depth = depth
+        self.indent = indent
 
     def __str__(self):
-        content = '\n'.join([str(node) for node in self.scope])
-        return '\n'.join([self.start, content, self.end])
+        indent = self.depth * self.indent
+        scope  = '\n'.join([str(node) for node in self.scope])
+        result = '\n'.join([indent + self.start, scope, indent + self.end])
+        return result
 
 
-class Porter:
+def port(path, method_name='classify'):
+    """
+    Convert the single decicion tree as a function.
 
-    def __init__(self):
-        self.indent = '    '
+    Parameters
+    ----------
+    :param path : string
+        The path of the exported text file.
+    :param method_name : string (default='classify')
+        The method name.
+    :return:
+    """
 
-    def port(self, path):
+    # Load data:
+    with open(path, 'r') as file:
+        content = file.readlines()
 
-        # Load data:
-        with open(path, 'r') as file:
-            content = file.readlines()
+    # Create root node:
+    root = Node('', '')
+    atts = []
 
-        # Parse data:
-        tree = Node('', '')
-        for line in content:
-            line = line.strip()
+    # Construct tree:
+    for line in content:
+        line = line.strip()
+        depth = line.count('|   ')
 
-            depth = line.count('|   ')
-            retrn = line.count(':') == 1
-            condition = line[(depth * len(self.indent)):]
+        # Get current node:
+        node = None
+        d = depth
+        if d > 0:
+            while d > 0:
+                node = root.scope[-1] if node is None else node.scope[-1]
+                d -= 1
+        else:
+            node = root.scope
 
-            # Get current node:
-            node = None
-            if depth > 0:
-                while depth > 0:
-                    if node is None:
-                        node = tree.scope[-1]
-                    else:
-                        node = node.scope[-1]
-                    depth = depth - 1
-            else:
-                node = tree.scope
+        # Get always the scope list:
+        if type(node) is not list:
+            node = node.scope
 
-            new = Node('if (' + condition + ') {', '}')
-            if retrn:
-                new.scope.append('return somewhat')
-                if type(node) is list:
-                    node.append(new)
-                else:
-                    node.scope.append(new)
-            else:
-                if depth > 0:
-                    node.scope.append(new)
-                else:
-                    if type(node) is list:
-                        node.append(new)
-                    else:
-                        node.scope.append(new)
+        # Build the condition:
+        cond = line[(depth * len('|   ')):]
+        has_return = line.count(':') == 1
+        if has_return:
+            cond = cond.split(':')[0]
+        atts.append(cond.split(' ')[0])
+        cond = Node('if (%s) {' % cond, '}', depth=depth+1)
 
-            # if depth <= prev_depth:
-            #     out.append(depth * self.indent + '}')
+        # Set condition logic:
+        if has_return:
+            indent = cond.indent * (depth + 2)
+            return_value = line[line.find(':') + 1 : line.find('(')].strip()
+            return_value = indent + 'return %s;' % str(return_value)
+            cond.scope.append(return_value)
+        node.append(cond)
 
-            # out.append(depth * self.indent + 'if (' + condition + ') {')
-            # if retrn:
-            #     out.append((depth + 1) * self.indent + 'return somewhat;')
-            #     out.append((depth) * self.indent + '}')
-            # else:
-            #     prev_depth = depth
+    # Merge the relevant attributes:
+    atts = list(set(atts))
+    atts.sort()
+    atts = ', '.join(['float ' + a for a in atts])
 
-            # print(condition)
-            # print(booom)
+    # Wrap function scope around built tree:
+    result = ''.join(['int %s function(%s) {'%
+                      (method_name, atts), str(root), '}'])
 
-
-            #
-            # indents = line.count('|   ') * self.indent
-            # print()
-            # print('original:')
-            # print(line)
-            # print('output:')
-            # condition = line[len(indents):]
-
-        return str(tree)
+    return result

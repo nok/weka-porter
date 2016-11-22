@@ -1,7 +1,7 @@
 import os
 import argparse
 
-from . import Porter
+from . import port
 
 
 def main():
@@ -29,8 +29,7 @@ def main():
     arg_print = args['print']
 
     if arg_input.endswith('.txt') and os.path.isfile(arg_input):
-        porter = Porter()
-        result = porter.port(arg_input)
+        result = port(arg_input)
 
         if arg_print is True:
             print(result)

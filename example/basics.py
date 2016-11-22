@@ -1,6 +1,4 @@
-from weka_weca import Porter
+from weka_weca import port
 
-
-porter = Porter()
-result = porter.port('example.txt')
+result = port('example.txt')
 print(result)
