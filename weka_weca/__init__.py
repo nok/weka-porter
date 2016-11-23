@@ -33,7 +33,7 @@ class Node:
 
 def port(path, method_name='classify'):
     """
-    Convert the single decicion tree as a function.
+    Convert a single decision tree as a function.
 
     Parameters
     ----------
