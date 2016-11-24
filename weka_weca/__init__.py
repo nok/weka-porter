@@ -26,8 +26,9 @@ class Node:
 
     def __str__(self):
         indent = self.depth * self.indent
-        scope  = '\n'.join([str(node) for node in self.scope])
-        result = '\n'.join([indent + self.start, scope, indent + self.end])
+        nl = '\n'
+        scope  = nl.join([str(node) for node in self.scope])
+        result = nl.join([indent + self.start, scope, indent + self.end])
         return result
 
 
