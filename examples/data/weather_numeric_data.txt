@@ -1,0 +1,7 @@
+outlook = sunny
+|   humidity <= 75: 1 (2.0)
+|   humidity > 75: -1 (3.0)
+outlook = overcast: 1 (4.0)
+outlook = rainy
+|   windy = TRUE: -1 (2.0)
+|   windy = FALSE: 1 (3.0)
