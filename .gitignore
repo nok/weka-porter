@@ -13,10 +13,11 @@
 
 .DS_Store
 
-weka_weca.egg-info
+weka_porter.egg-info
 dist
 build
 
+.tmp/
 .temp/
 temp/
 tmp

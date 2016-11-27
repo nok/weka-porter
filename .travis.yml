@@ -1,0 +1,36 @@
+language: python
+notifications:
+  email: false
+branches:
+  only:
+  - master
+  - stable
+python:
+  - "2.7"
+  - "3.2"
+  - "3.3"
+  - "3.4"
+  - "3.5"
+node_js:
+  - "6"
+compiler:
+  - gcc
+install:
+  - sudo apt-get update
+  - if [[ "${TRAVIS_PYTHON_VERSION:0:1}" == "2" ]]; then
+      wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh;
+    else
+      wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
+    fi
+  - bash miniconda.sh -b -p $HOME/miniconda
+  - export PATH="$HOME/miniconda/bin:$PATH"
+  - hash -r
+  - conda config --set always_yes yes --set changeps1 no
+  - conda config --add channels conda-forge
+  - conda update -q conda
+  - conda install -n root _license
+  - conda info -a
+  - conda env create -q -n weka-porter python=$TRAVIS_PYTHON_VERSION -f environment.yml
+  - source activate weka-porter
+script:
+  - python -m unittest discover -vp '*Test.py'

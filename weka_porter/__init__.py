@@ -3,6 +3,8 @@
 class Node:
     """Data structure of a single node."""
 
+    __version__ = '0.1.0'
+
     def __init__(self, start, end, depth=0, indent='    '):
         """
         Wrap string initially around string.
@@ -25,6 +27,14 @@ class Node:
         self.indent = indent
 
     def __str__(self):
+        """
+        Print the current node with all sub nodes.
+
+        Return
+        ------
+        :return : string
+            The ported scope of the node.
+        """
         indent = self.depth * self.indent
         nl = '\n'
         scope = nl.join([str(node) for node in self.scope])
@@ -33,26 +43,54 @@ class Node:
 
 
 class Porter:
+    """Main class to port a decision tree from the Weka format."""
 
     # @formatter:off
     TEMPLATES = {
         'c': {
-            'method':   '{return_type} {method_name}({atts}) {{',
-            'if':       'if ({cond}) {{',
-            'elif':     'else if ({cond}) {{',
-            'indent':   '    ',
+            'method': {
+                'open':     '{return_type} {method_name}({atts}) {{',
+                'close':    '}'
+            },
+            'if':           'if ({cond}) {{',
+            'elif':         'else if ({cond}) {{',
+            'data': {
+                'string':   'string',
+                'int':      'int',
+                'bool':     'bool',
+                'double':   'double',
+            },
+            'indent':       '    ',
         },
         'java': {
-            'method': 'public static {return_type} {method_name}({atts}) {{',
-            'if':       'if ({cond}) {{',
-            'elif':     'else if ({cond}) {{',
-            'indent':   '    ',
+            'method': {
+                'open':     'public static {return_type} {method_name}({atts}) {{',
+                'close':    '    return null;\n }'
+            },
+            'if':           'if ({cond}) {{',
+            'elif':         'else if ({cond}) {{',
+            'data': {
+                'string':   'String',
+                'int':      'int',
+                'bool':     'boolean',
+                'double':   'double',
+            },
+            'indent':       '    ',
         },
         'js': {
-            'method': 'var {method_name} = function({atts}) {{',
-            'if':       'if ({cond}) {{',
-            'elif':     'else if ({cond}) {{',
-            'indent':   '    ',
+            'method': {
+                'open':     'var {method_name} = function({atts}) {{',
+                'close':    '}'
+            },
+            'if':           'if ({cond}) {{',
+            'elif':         'else if ({cond}) {{',
+            'data': {
+                'string':   '',
+                'int':      '',
+                'bool':     '',
+                'double':   '',
+            },
+            'indent':       '    ',
         }
     }
     # @formatter:on
@@ -66,11 +104,32 @@ class Porter:
         """
         self.language = language
 
-    def temp(self, key):
-        try:
-            return self.TEMPLATES.get(self.language).get(key)
-        except IndexError:
-            raise IndexError('Template with key \' %s \' not found.' % key)
+    def temp(self, name, templates=None):
+        """
+        Get the specific template of the chosen programming language.
+
+        Parameters
+        ----------
+        :param name : string
+            The key name of the template.
+        :param tempaltes : string
+            The template with placeholders.
+
+        Returns
+        -------
+        :return : string
+            The required template string.
+        """
+        if templates is None:
+            templates = self.TEMPLATES.get(self.language)
+        keys = name.split('.')
+        key = keys.pop(0).lower()
+        template = templates.get(key, None)
+        if type(template) is str:
+            return template
+        else:
+            keys = '.'.join(keys)
+            return self.temp(keys, templates=template)
 
     def port(self, path, method_name='classify'):
         """
@@ -82,7 +141,11 @@ class Porter:
             The path of the exported text file.
         :param method_name : string (default='classify')
             The method name.
-        :return:
+
+        Return
+        ------
+        :return : string
+            The ported tree.
         """
 
         # Load data:
@@ -122,28 +185,30 @@ class Porter:
                 if return_type is None:
                     return_type = parts[1].strip().split(' ')[0]
                     if return_type.isdigit():
-                        return_type = 'int'
+                        return_type = self.temp('data.int')
                     elif return_type in ['TRUE', 'FALSE']:
-                        return_type = 'bool'
+                        return_type = self.temp('data.bool')
                     else:
-                        return_type = 'String' \
-                            if self.language in ['java', 'js'] else 'string'
-
-            if ' = ' in cond:
-                cond = cond.replace(' = ', ' == ')
+                        return_type = self.temp('data.string')
 
             att_name = cond.split(' ')[0]
-            att_type = 'String' if self.language in ['java', 'js'] else 'string'
+            att_type = self.temp('data.string')
             if any(x in cond for x in ['TRUE', 'FALSE']):
-                att_type = 'bool'
+                att_type = self.temp('data.bool')
                 cond = cond.replace('TRUE', 'true')
                 cond = cond.replace('FALSE', 'false')
             elif any(x in cond for x in ['>', '>=', '<', '<=']):
-                att_type = 'float'
+                att_type = self.temp('data.double')
             else:
                 parts = cond.split(' ')
                 parts.append('"%s"' % parts.pop())
                 cond = ' '.join(parts)
+
+            if ' = ' in cond:
+                if self.language == 'java' and att_type.lower() == 'string':
+                    cond = cond.replace(' = ', '.equals(') + ')'
+                else:
+                    cond = cond.replace(' = ', ' == ')
 
             atts.append('%s %s' % (att_type, att_name))
 
@@ -167,9 +232,9 @@ class Porter:
         atts = ', '.join(atts)
 
         # Wrap function scope around built tree:
-
-        method = self.temp('method').format(
+        method_open = self.temp('method.open').format(
             return_type=return_type, method_name=method_name, atts=atts)
-        result = ''.join([method, str(root), '}'])
+        method_close = self.temp('method.close')
 
+        result = ''.join([method_open, str(root), method_close])
         return result
