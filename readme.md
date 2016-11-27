@@ -2,6 +2,8 @@
 # weka-porter
 
 [![Build Status](https://img.shields.io/travis/nok/weka-porter/master.svg)](https://travis-ci.org/nok/weka-porter)
+[![PyPI](https://img.shields.io/pypi/v/weka-porter.svg)](https://pypi.python.org/pypi/weka-porter)
+[![PyPI](https://img.shields.io/pypi/pyversions/weka-porter.svg)](https://pypi.python.org/pypi/weka-porter)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/nok/weka-porter/master/license.txt)
 
 Port or transpile trained decision trees from [Weka](http://www.cs.waikato.ac.nz/ml/weka/) to a low-level programming language like [C](https://en.wikipedia.org/wiki/C_(programming_language)), [Java](https://en.wikipedia.org/wiki/Java_(programming_language)) or [JavaScript](https://en.wikipedia.org/wiki/JavaScript).<br>It's recommended for limited embedded systems and critical applications where performance matters most.

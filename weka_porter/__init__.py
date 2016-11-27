@@ -3,8 +3,6 @@
 class Node:
     """Data structure of a single node."""
 
-    __version__ = '0.1.0'
-
     def __init__(self, start, end, depth=0, indent='    '):
         """
         Wrap string initially around string.
@@ -44,6 +42,8 @@ class Node:
 
 class Porter:
     """Main class to port a decision tree from the Weka format."""
+
+    __version__ = '0.1.0'
 
     # @formatter:off
     TEMPLATES = {
