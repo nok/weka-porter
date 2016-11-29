@@ -8,7 +8,7 @@ def main():
     parser = argparse.ArgumentParser(
         description=('Transpile a decision tree from Weka '
                      'to a low-level programming language.'),
-        epilog='More details on: https://github.com/nok/weka-tree-porter')
+        epilog='More details on: https://github.com/nok/weka-porter')
     parser.add_argument(
         '--input', '-i',
         required=True,
