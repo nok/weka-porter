@@ -192,18 +192,18 @@ class Porter:
                     return_type = parts[1].strip().split(' ')[0]
                     if return_type.isdigit():
                         return_type = self.temp('data.int')
-                    elif return_type in ['TRUE', 'FALSE']:
+                    elif return_type in set(['TRUE', 'FALSE']):
                         return_type = self.temp('data.bool')
                     else:
                         return_type = self.temp('data.string')
 
             att_name = cond.split(' ')[0]
             att_type = self.temp('data.string')
-            if any(x in cond for x in ['TRUE', 'FALSE']):
+            if any(x in cond for x in set(['TRUE', 'FALSE'])):
                 att_type = self.temp('data.bool')
                 cond = cond.replace('TRUE', 'true')
                 cond = cond.replace('FALSE', 'false')
-            elif any(x in cond for x in ['>', '>=', '<', '<=']):
+            elif any(x in cond for x in set(['>', '>=', '<', '<='])):
                 att_type = self.temp('data.double')
             else:
                 parts = cond.split(' ')
