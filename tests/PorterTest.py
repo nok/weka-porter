@@ -28,7 +28,9 @@ class PorterTest(unittest.TestCase):
         class_name = 'Test'
         method_name = 'classify'
 
-        model = self.porter.port('./examples/weather_data.txt', method_name=method_name)
+        model = self.porter.port(
+            './examples/weather_data.txt',
+            method_name=method_name)
 
         path = './.tmp/%s.java' % class_name
         with open(path, 'w') as f:
@@ -61,8 +63,9 @@ class PorterTest(unittest.TestCase):
         class_name = 'Test'
         method_name = 'classify'
 
-        model = self.porter.port('./examples/weather_data.txt',
-                                 method_name=method_name)
+        model = self.porter.port(
+            './examples/weather_data.txt',
+            method_name=method_name)
 
         path = './.tmp/%s.java' % class_name
         with open(path, 'w') as f:
@@ -95,7 +98,9 @@ class PorterTest(unittest.TestCase):
         class_name = 'Test'
         method_name = 'classify'
 
-        model = self.porter.port('./examples/weather_num_data.txt', method_name=method_name)
+        model = self.porter.port(
+            './examples/weather_num_data.txt',
+            method_name=method_name)
 
         path = './.tmp/%s.java' % class_name
         with open(path, 'w') as f:
@@ -128,8 +133,9 @@ class PorterTest(unittest.TestCase):
         class_name = 'Test'
         method_name = 'classify'
 
-        model = self.porter.port('./examples/weather_num_data.txt',
-                                 method_name=method_name)
+        model = self.porter.port(
+            './examples/weather_num_data.txt',
+            method_name=method_name)
 
         path = './.tmp/%s.java' % class_name
         with open(path, 'w') as f:
