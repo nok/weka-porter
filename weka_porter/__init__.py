@@ -65,7 +65,7 @@ class Porter:
         'java': {
             'method': {
                 'open':     'public static {return_type} {method_name}({atts}) {{',
-                'close':    '    return null;\n }'
+                'close':    '    return {default};\n }}'
             },
             'if':           'if ({cond}) {{',
             'elif':         'else if ({cond}) {{',
@@ -74,6 +74,12 @@ class Porter:
                 'int':      'int',
                 'bool':     'boolean',
                 'double':   'double',
+            },
+            'default_return': {
+                'string': 'null',
+                'int': '-1',
+                'bool': 'false',
+                'double': '-1',
             },
             'indent':       '    ',
         },
@@ -232,9 +238,17 @@ class Porter:
         atts = ', '.join(atts)
 
         # Wrap function scope around built tree:
-        method_open = self.temp('method.open').format(
-            return_type=return_type, method_name=method_name, atts=atts)
-        method_close = self.temp('method.close')
+        method_open_format = {
+            'return_type': return_type,
+            'method_name': method_name,
+            'atts': atts
+        }
+        method_open = self.temp('method.open').format(**method_open_format)
+        if self.language == 'java':
+            default = self.temp('default_return.%s' % return_type.lower())
+            method_close = self.temp('method.close').format(default=default)
+        else:
+            method_close = self.temp('method.close')
 
         result = ''.join([method_open, str(root), method_close])
         return result
