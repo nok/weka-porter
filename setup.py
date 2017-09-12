@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import os
-from setuptools import setup, find_packages
+from setuptools import setup
+from setuptools import find_packages
+
 
 from weka_porter import Porter
 VERSION = Porter.__version__
