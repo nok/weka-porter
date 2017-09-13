@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 
 import os
+import sys
 import argparse
 
 from . import Porter
 
 
-def main():
+def parse_args(args):
     parser = argparse.ArgumentParser(
         description=('Transpile a decision tree from Weka '
                      'to a low-level programming language.'),
@@ -19,30 +20,59 @@ def main():
         '--output', '-o',
         required=False,
         help='Set the destination directory.')
+    languages = {
+        'c': 'C',
+        'java': 'Java',
+        'js': 'JavaScript'
+    }
     parser.add_argument(
         '--language', '-l',
-        choices=['c', 'java', 'js'],
+        choices=languages.keys(),
         default='java',
         required=False,
-        help='Set the target programming language.')
+        help=argparse.SUPPRESS)
+    for key, lang in list(languages.items()):
+        parser.add_argument(
+            '--{}'.format(key),
+            action='store_true',
+            help='Set {} as the target programming language.'.format(lang))
     parser.add_argument(
         '--print', '-p',
         required=False,
         default=False,
         help='Set whether the result should be printed to the console.')
+    args = vars(parser.parse_args(args))
+    return args
 
-    args = vars(parser.parse_args())
+
+def main():
+    args = parse_args(sys.argv[1:])
+
     arg_input = str(args['input'])
     arg_output = str(args['output'])
     arg_print = args['print']
-    arg_language = args['language']
 
-    if arg_input.endswith('.txt') and os.path.isfile(arg_input):
+    # Check input data:
+    if not arg_input.endswith('.txt') or not os.path.isfile(arg_input):
+        error = 'No valid txt file found.'
+        sys.exit('Error: {}'.format(error))
+
+    # Determine language:
+    arg_language = str(args['language'])
+    languages = ['c', 'java', 'js']
+    for key in languages:
+        if args.get(key):  # found explicit assignment
+            arg_language = key
+            break
+
+    try:
         porter = Porter(language=arg_language)
-        result = porter.port(arg_input)
-
+        output = porter.port(arg_input)
+    except Exception as e:
+        sys.exit('Error: {}'.format(str(e)))
+    else:
         if arg_print is True:
-            print(result)
+            print(output)
         else:
             filename = 'result.txt'
             path = arg_input.split(os.sep)
@@ -51,8 +81,9 @@ def main():
             path = os.sep.join(path)
             if arg_output != '' and os.path.isdir(arg_output):
                 path = os.path.join(arg_output, filename)
-            with open(path, 'w') as file:
-                file.write(result)
+            with open(path, 'w') as file_:
+                file_.write(output)
+
 
 if __name__ == "__main__":
     main()
