@@ -6,7 +6,6 @@ from setuptools import find_packages
 
 
 from weka_porter import Porter
-VERSION = Porter.__version__
 
 path = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(path, 'requirements.txt')) as f:
@@ -17,7 +16,7 @@ setup(
     name='weka-porter',
     packages=find_packages(exclude=["tests.*", "tests"]),
     include_package_data=True,
-    version=VERSION,
+    version=Porter.__version__,
     description='Transpile trained decision trees from Weka to a low-level programming language.',
     author='Darius Morawiec',
     author_email='ping@nok.onl',
