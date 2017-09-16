@@ -6,14 +6,12 @@
 [![PyPI](https://img.shields.io/pypi/pyversions/weka-porter.svg)](https://pypi.python.org/pypi/weka-porter)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/nok/weka-porter/master/license.txt)
 
-Port or transpile trained decision trees from [Weka](http://www.cs.waikato.ac.nz/ml/weka/) to a low-level programming language like [C](https://en.wikipedia.org/wiki/C_(programming_language)), [Java](https://en.wikipedia.org/wiki/Java_(programming_language)) or [JavaScript](https://en.wikipedia.org/wiki/JavaScript).<br>It's recommended for limited embedded systems and critical applications where performance matters most.
+Transpile trained decision trees from [Weka](http://www.cs.waikato.ac.nz/ml/weka/) to a low-level programming language like C, Java or JavaScript.<br>It's recommended for limited embedded systems and critical applications where performance matters most.
 
 
 ## Benefit
 
-The benefit of the module is to transpile a decision tree from the compact representation by the [Weka](http://www.cs.waikato.ac.nz/ml/weka/) software to a target programming language.
-
-### Input
+The benefit of the module is to transpile a decision tree from the compact representation by the [Weka](http://www.cs.waikato.ac.nz/ml/weka/) software to a target programming language:
 
 ```
 outlook = sunny
@@ -24,8 +22,6 @@ outlook = rainy
 |   windy = TRUE: no (2.0)
 |   windy = FALSE: yes (3.0)
 ```
-
-### Output
 
 ```java
 public static String classify(String outlook, boolean windy, double humidity) {
@@ -55,7 +51,7 @@ public static String classify(String outlook, boolean windy, double humidity) {
 
 ## Installation
 
-```sh
+```
 pip install weka-porter
 ```
 
@@ -73,40 +69,33 @@ This example shows how you can port a decision tree to Java:
 from weka_porter import Porter
 
 porter = Porter(language='java')
-result = porter.port('weather_data.txt', method_name='classify')
-print(result)
+output = porter.port('weather_data.txt', method_name='classify')
+print(output)
 ```
 
-The ported [tree](examples/basics.py#L9-L31) matches the [original version](examples/weather_data.txt) of the model.
+The ported [tree](examples/basics.py#L9-L31) matches the [original version](examples/weather_data.txt) of the estimator.
 
 
 ### Command-line interface
 
-This examples shows how you can port a model from the command line. The model can be ported by using the following command:
-
-```sh
-python -m weka_porter --input <txt_file> [--output <destination_dir>] [--language {c,java,js}]
-python -m weka_porter -i <txt_file> [-o <destination_dir>] [-l {c,java,js}]
-```
-
-For example:
-
-```sh
-python -m weka_porter --input model.txt --language java
-python -m weka_porter -i model.txt -l java
-```
-
-By changing the language parameter you can set the target programming language:
+This examples shows how you can port a estimator from the command line. The estimator can be ported by using the following command:
 
 ```
-python -m weka_porter -i model.txt -l java
-python -m weka_porter -i model.txt -l js
-python -m weka_porter -i model.txt -l c
+python -m weka_porter --input <txt_file> [--output <destination_dir>] [--c] [--java] [--js]
+python -m weka_porter -i <txt_file> [-o <destination_dir>] [--c] [--java] [--js]
+```
+
+The target programming language is changeable on the fly:
+
+```
+python -m weka_porter -i estimator.txt --c
+python -m weka_porter -i estimator.txt --java
+python -m weka_porter -i estimator.txt --js
 ```
 
 Finally the following command will display all options:
 
-```sh
+```
 python -m weka_porter --help
 python -m weka_porter -h
 ```
@@ -116,34 +105,41 @@ python -m weka_porter -h
 
 ### Environment
 
-Install the required environment [modules](environment.yml) by executing the bash script [sh_environment.sh](sh_environment.sh) or type:
+Install the required environment [modules](environment.yml) by executing the script [environment.sh](recipes/environment.sh):
 
-```sh
-conda config --add channels conda-forge
-conda env create -n weka-porter python=2 -f environment.yml
+```
+bash ./recipes/environment.sh
 ```
 
-Furthermore you need to install [Node.js](https://nodejs.org) (`>=6`), [Java](https://java.com) (`>=1.6`) and [GCC](https://gcc.gnu.org) (`>=4.2`) for testing.
+```
+conda config --add channels conda-forge
+conda env create -n weka-porter python=2 -f environment.yml
+source activate weka-porter
+```
+
+Furthermore [Node.js](https://nodejs.org) (`>=6`), [Java](https://java.com) (`>=1.6`) and [GCC](https://gcc.gnu.org) (`>=4.2`) are required for all tests.
 
 
 ### Testing
 
-Run all [tests](tests) by executing the bash script [sh_tests.sh](sh_tests.sh) or type:
+Run all [tests](tests) by executing the bash script [test.sh](recipes/test.sh):
 
-```sh
-source activate weka-porter
+```
+bash ./recipes/test.sh
+```
+
+```
 python -m unittest discover -vp '*Test.py'
-source deactivate
 ```
 
 The tests cover module functions as well as matching predictions of ported trees.
 
 
-## Questions?
-
-Don't be shy and feel free to contact me on [Twitter](https://twitter.com/darius_morawiec).
-
-
 ## License
 
 The library is Open Source Software released under the [MIT](license.txt) license.
+
+
+## Questions?
+
+Don't be shy and feel free to contact me on [Twitter](https://twitter.com/darius_morawiec).
