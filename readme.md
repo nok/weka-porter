@@ -105,15 +105,14 @@ python -m weka_porter -h
 
 ### Environment
 
-Install the required environment [modules](environment.yml) by executing the script [environment.sh](recipes/environment.sh):
+Install the required environment [modules](environment.yml) by executing the script [environment.sh](scripts/environment.sh):
 
 ```
-bash ./recipes/environment.sh
+bash ./scripts/environment.sh
 ```
 
 ```
-conda config --add channels conda-forge
-conda env create -n weka-porter python=2 -f environment.yml
+conda env create -n weka-porter -f environment.yml
 source activate weka-porter
 ```
 
@@ -122,10 +121,10 @@ Furthermore [Node.js](https://nodejs.org) (`>=6`), [Java](https://java.com) (`>=
 
 ### Testing
 
-Run all [tests](tests) by executing the bash script [test.sh](recipes/test.sh):
+Run all [tests](tests) by executing the bash script [test.sh](scripts/test.sh):
 
 ```
-bash ./recipes/test.sh
+bash ./scripts/test.sh
 ```
 
 ```
