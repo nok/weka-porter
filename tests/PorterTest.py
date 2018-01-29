@@ -31,7 +31,7 @@ class PorterTest(unittest.TestCase):
         method_name = 'classify'
 
         model = self.porter.port(
-            './examples/weather_data.txt',
+            './examples/j48_tree.txt',
             method_name=method_name)
 
         path = './.tmp/%s.java' % class_name
@@ -66,7 +66,7 @@ class PorterTest(unittest.TestCase):
         method_name = 'classify'
 
         model = self.porter.port(
-            './examples/weather_data.txt',
+            './examples/j48_tree.txt',
             method_name=method_name)
 
         path = './.tmp/%s.java' % class_name
@@ -101,7 +101,7 @@ class PorterTest(unittest.TestCase):
         method_name = 'classify'
 
         model = self.porter.port(
-            './examples/weather_num_data.txt',
+            './examples/j48_tree_numeric.txt',
             method_name=method_name)
 
         path = './.tmp/%s.java' % class_name
@@ -136,7 +136,7 @@ class PorterTest(unittest.TestCase):
         method_name = 'classify'
 
         model = self.porter.port(
-            './examples/weather_num_data.txt',
+            './examples/j48_tree_numeric.txt',
             method_name=method_name)
 
         path = './.tmp/%s.java' % class_name
