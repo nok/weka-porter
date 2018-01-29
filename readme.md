@@ -6,7 +6,7 @@
 [![PyPI](https://img.shields.io/pypi/pyversions/weka-porter.svg)](https://pypi.python.org/pypi/weka-porter)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/nok/weka-porter/master/license.txt)
 
-Transpile trained decision trees from [Weka](http://www.cs.waikato.ac.nz/ml/weka/) to a low-level programming language like C, Java or JavaScript.<br>It's recommended for limited embedded systems and critical applications where performance matters most.
+Transpile trained decision trees from [Weka](http://www.cs.waikato.ac.nz/ml/weka/) to C, Java or JavaScript.<br>It's recommended for limited embedded systems and critical applications where performance matters most.
 
 
 ## Benefit
@@ -51,7 +51,7 @@ public static String classify(String outlook, boolean windy, double humidity) {
 
 ## Installation
 
-```
+```bash
 pip install weka-porter
 ```
 
@@ -65,15 +65,26 @@ Either you use the porter as [imported module](#module) in your application or y
 
 This example shows how you can port a decision tree to Java:
 
+```bash
+# Download Weka:
+wget https://netcologne.dl.sourceforge.net/project/weka/weka-3-8/3.8.2/weka-3-8-2.zip
+unzip weka-3-8-2.zip && cd weka-3-8-2
+
+# Train model and save the result:
+java -cp weka.jar weka.classifiers.trees.J48 -t data/weather.numeric.arff -v > j48.txt
+
+# Copy and paste the compact representation from 'j48.txt' to a new file (i.e. 'j48_tree.txt') manually.
+```
+
 ```python
 from weka_porter import Porter
 
 porter = Porter(language='java')
-output = porter.port('weather_data.txt', method_name='classify')
+output = porter.port('j48_tree.txt', method_name='classify')
 print(output)
 ```
 
-The ported [tree](examples/basics.py#L9-L31) matches the [original version](examples/weather_data.txt) of the estimator.
+The ported [tree](examples/basics.py#L9-L31) matches the [original version](examples/j48_tree.txt) of the estimator.
 
 
 ### Command-line interface
@@ -87,7 +98,7 @@ python -m weka_porter -i <txt_file> [-o <destination_dir>] [--c] [--java] [--js]
 
 The target programming language is changeable on the fly:
 
-```
+```bash
 python -m weka_porter -i estimator.txt --c
 python -m weka_porter -i estimator.txt --java
 python -m weka_porter -i estimator.txt --js
@@ -95,7 +106,7 @@ python -m weka_porter -i estimator.txt --js
 
 Finally the following command will display all options:
 
-```
+```bash
 python -m weka_porter --help
 python -m weka_porter -h
 ```
@@ -107,11 +118,11 @@ python -m weka_porter -h
 
 Install the required environment [modules](environment.yml) by executing the script [environment.sh](scripts/environment.sh):
 
-```
+```bash
 bash ./scripts/environment.sh
 ```
 
-```
+```bash
 conda env create -n weka-porter -f environment.yml
 source activate weka-porter
 ```
@@ -123,11 +134,11 @@ Furthermore [Node.js](https://nodejs.org) (`>=6`), [Java](https://java.com) (`>=
 
 Run all [tests](tests) by executing the bash script [test.sh](scripts/test.sh):
 
-```
+```bash
 bash ./scripts/test.sh
 ```
 
-```
+```bash
 python -m unittest discover -vp '*Test.py'
 ```
 

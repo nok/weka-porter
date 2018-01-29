@@ -5,7 +5,7 @@ from weka_porter import Porter
 
 porter = Porter(language='java')
 
-result = porter.port('weather_data.txt', method_name='classify')
+result = porter.port('j48_tree.txt', method_name='classify')
 print(result)
 
 """
@@ -33,7 +33,7 @@ public static String classify(String outlook, boolean windy, double humidity) {
 }
 """
 
-result = porter.port('weather_num_data.txt', method_name='classify_num')
+result = porter.port('j48_tree_numeric.txt', method_name='classify_num')
 print(result)
 
 """
