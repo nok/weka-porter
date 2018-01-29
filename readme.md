@@ -65,7 +65,7 @@ Either you use the porter as [imported module](#module) in your application or y
 
 This example shows how you can port a decision tree to Java:
 
-```bash
+```
 # Download Weka:
 wget https://netcologne.dl.sourceforge.net/project/weka/weka-3-8/3.8.2/weka-3-8-2.zip
 unzip weka-3-8-2.zip && cd weka-3-8-2
@@ -99,9 +99,9 @@ python -m weka_porter -i <txt_file> [-o <destination_dir>] [--c] [--java] [--js]
 The target programming language is changeable on the fly:
 
 ```bash
-python -m weka_porter -i estimator.txt --c
-python -m weka_porter -i estimator.txt --java
-python -m weka_porter -i estimator.txt --js
+python -m weka_porter -i j48_tree.txt --c
+python -m weka_porter -i j48_tree.txt --java
+python -m weka_porter -i j48_tree.txt --js
 ```
 
 Finally the following command will display all options:
