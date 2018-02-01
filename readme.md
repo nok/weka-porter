@@ -61,30 +61,46 @@ pip install weka-porter
 Either you use the porter as [imported module](#module) in your application or you use the [command-line interface](#cli).
 
 
-### Module
+### Training
 
-This example shows how you can port a decision tree to Java:
+First of all a trained decision tree is required.
 
 ```
-# Download Weka:
+# download Weka:
 wget https://netcologne.dl.sourceforge.net/project/weka/weka-3-8/3.8.2/weka-3-8-2.zip
 unzip weka-3-8-2.zip && cd weka-3-8-2
 
-# Train model and save the result:
+# train decision tree and save the result:
 java -cp weka.jar weka.classifiers.trees.J48 -t data/weather.numeric.arff -v > j48.txt
-
-# Copy and paste the compact representation from 'j48.txt' to a new file (i.e. 'j48_tree.txt') manually.
 ```
+
+Copy and paste the compact representation from `j48.txt` to a new file (i.e. `j48_tree.txt`):
+
+```
+outlook = sunny
+|   humidity <= 75: yes (2.0)
+|   humidity > 75: no (3.0)
+outlook = overcast: yes (4.0)
+outlook = rainy
+|   windy = TRUE: no (2.0)
+|   windy = FALSE: yes (3.0)
+```
+
+
+### Module
+
+Now the saved decision tree can be ported to Java:
 
 ```python
 from weka_porter import Porter
 
 porter = Porter(language='java')
 output = porter.port('j48_tree.txt', method_name='classify')
+
 print(output)
 ```
 
-The ported [tree](examples/basics.py#L9-L31) matches the [original version](examples/j48_tree.txt) of the estimator.
+The ported [decision tree](examples/basics.py#L12-L33) matches the [original version](examples/j48_tree.txt) of the estimator.
 
 
 ### Command-line interface
